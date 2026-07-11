@@ -27,4 +27,14 @@ Status: **in progress**. This file contains infrastructure-state evidence only. 
 - Workers Observability identified the failure as R2 rejecting an arbitrary inbound `ReadableStream` without a known length.
 - The failure was reproduced with a new official Workers/R2 runtime test before implementation.
 - The Worker now materializes the already size-bounded stream into byte-exact fixed-size data before R2 persistence; the focused tests and full local suite pass.
-- A post-fix real inbound retry is still required before marking receipt as passed.
+- A post-fix real inbound retry arrived successfully.
+
+## Post-fix inbound receipt
+
+- One non-sensitive test message was accepted through the active catch-all Worker route.
+- Generated message ID: `msg_0mrgc7ugc52004c5aed99525d65293107`.
+- The message reached `parse_status: ready`, retained content, and had zero attachments.
+- Sanitized parsed-content fingerprint: `884ae224d324c438`.
+- The polling API returned the message as unprocessed.
+- Explicit acknowledgement succeeded, after which the message was absent from the unprocessed feed.
+- This proves the active-recipient receive/poll/ack happy path. Unknown and disabled recipient SMTP behavior remains pending.
