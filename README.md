@@ -13,9 +13,11 @@
 
 3. Give your favorite coding agent this prompt:
 
-   > Install Agent Post Office from `https://github.com/Agent-Post-Office/agentpostoffice-cloudflare` for `<your-domain>`. Create mailboxes `<your-mailboxes>`. Follow the repository's `agentpostoffice-setup` skill, use my existing Wrangler login, show me proposed changes, and ask before deployment, DNS/MX changes, Email Routing activation, Email Sending onboarding, or sending real mail. Do not ask me to paste API tokens into chat.
+   > Install Agent Post Office from `https://github.com/Agent-Post-Office/agentpostoffice-cloudflare` for `<your-domain>`. Create mailboxes `<your-mailboxes>`. Follow the repository's `agentpostoffice-setup` skill, use my existing Wrangler login, show me proposed changes, and ask before deployment, DNS/MX changes, Email Routing activation, or Email Sending onboarding. After the setup and live delivery checks pass, you are authorized to send exactly one non-sensitive installation-verification email from an active mailbox to `itworks@agentpostoffice.com`. Report the result without copying addresses or message content into evidence. This check may be counted once as an approximate verified installation; it does not subscribe me to future email. Ask before sending any other real mail. Do not ask me to paste API tokens into chat.
 
 That is the normal installation path. The rest of this README explains what the agent does and provides a manual fallback.
+
+The final verification message proves that the new installation can send to an arbitrary external recipient. Repeated messages from the same sender do not represent additional installations. The public count is approximate and must be described as **verified installations**, not total users or guaranteed active deployments.
 
 ### How it works
 
@@ -94,6 +96,20 @@ The test suite has two gates:
 - Node unit tests for boundary normalization, bearer handling, the client, and SMTP persistence failure ordering.
 - Cloudflare workerd integration tests with real local D1 and R2 bindings for migrations, keyset pagination, tombstones, download headers, MIME parsing, attachment storage, queue redelivery, and idempotency replay.
 
+## Sieve autoresponders
+
+Agent Post Office supports a deliberately bounded Sieve autoresponder profile. Scripts run only for newly ready inbound messages, one active revision per mailbox, through a separate Automation Queue. The profile supports standard `envelope` matching and plain-text `vacation` replies; it cannot inspect bodies, redirect, delete, reject, attach files, select arbitrary recipients, or run code.
+
+Store and activation are separate operations:
+
+```bash
+node packages/cli/dist/index.js sieve validate --inbox <inbox-id> --file examples/sieve/installation-welcome.sieve
+node packages/cli/dist/index.js sieve put --inbox <inbox-id> --name "Installation welcome" --file examples/sieve/installation-welcome.sieve
+node packages/cli/dist/index.js sieve activate <script-id> --inbox <inbox-id>
+```
+
+No script is installed or activated by default. The included installation-welcome script is an inactive example; only the central `itworks@agentpostoffice.com` mailbox uses it.
+
 TDD is mandatory for new behavior; see [AGENTS.md](./AGENTS.md).
 
 ## Configure Cloudflare application resources
@@ -114,6 +130,12 @@ npm run config:generate -- --mail-domain mail.example.com
 The helper authenticates Wrangler, inspects/reuses or creates D1, R2, Queue, and DLQ resources, writes the ignored `packages/worker/wrangler.jsonc`, and applies migrations. It does not silently activate MX or routing.
 
 See [Agent Post Office installation](./docs/INSTALL.md#choose-a-cloudflare-setup-path) for the dashboard walkthrough, agent prompt contract, Wrangler commands, permissions, and approval boundaries.
+
+## Upgrade existing deployments
+
+Merging a release does not deploy any self-hosted Worker. Each operator or local agent upgrades its own instances with their existing Cloudflare bindings. Multiple instances use separate ignored named Wrangler configs plus an ignored non-secret deployment registry, and are upgraded serially with a stop-on-failure gate between instances.
+
+See [the multi-instance upgrade runbook](./docs/UPGRADING.md) for inventory setup, named config generation, migration compatibility rules, dry runs, deployment, smoke checks, and Worker rollback.
 
 ## Agent-assisted Cloudflare setup
 
