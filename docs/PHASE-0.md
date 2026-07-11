@@ -1,6 +1,6 @@
 # Mandatory Cloudflare Phase 0 proof
 
-Status: **not run**. Local tests are green, but no live Cloudflare account, domain, DNS, SMTP, or Email Sending behavior has been verified by this repository state.
+Status: **in progress**. Local tests are green and inbound routing is configured, but real SMTP receipt, Email Sending, authentication, failure semantics, and delivery observability remain unproven.
 
 Run this checklist on a disposable domain or subdomain. Save sanitized evidence under `docs/phase-0-results/YYYY-MM-DD-domain.md`. Never record API tokens, Agent Post Office bearer tokens, subjects, bodies, attachments, or complete sender/recipient addresses.
 
@@ -8,7 +8,7 @@ Run this checklist on a disposable domain or subdomain. Save sanitized evidence 
 | --- | --- | --- |
 | Agent-driven install | Commands and resource IDs showing setup completed after user token creation without dashboard steps. | Pending |
 | Least-privilege token | Exact Cloudflare permissions and successful/failed API calls proving no extra permission is needed. | Pending |
-| Domain routing | Active recipient accepted; unknown and disabled recipients rejected by the catch-all Worker. | Pending |
+| Domain routing | Active recipient accepted; unknown and disabled recipients rejected by the catch-all Worker. | Configured; real delivery pending |
 | Outbound eligibility | Arbitrary unverified recipient send on Workers Paid returns a message ID; entitlement errors recorded safely. | Pending |
 | Outbound authentication | External header analysis shows SPF, DKIM, and DMARC pass. | Pending |
 | MIME fidelity | Byte hashes match for small, multipart, non-UTF-8, attachment-heavy, and near-10-MiB raw messages. | Pending |

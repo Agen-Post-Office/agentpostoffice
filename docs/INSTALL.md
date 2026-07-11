@@ -155,11 +155,9 @@ After the operator explicitly approves the displayed provider/MX cutover, the ag
 
 ```bash
 npx wrangler email routing enable "$MAIL_DOMAIN"
-npx wrangler email routing rules update "$MAIL_DOMAIN" catch-all \
-  --enabled true \
-  --action-type worker \
-  --action-value agentpostoffice
 ```
+
+Wrangler 4.110.0 rejects `worker` actions for catch-all rules in its local argument validation even though Cloudflare's Email Routing API accepts the same action. Configure the catch-all-to-Worker action through the Cloudflare dashboard or the supported API after showing the exact rule and receiving approval. Do not substitute a `drop` or forwarding rule. The required API rule shape is an enabled catch-all matcher with a single `worker` action whose value is `agentpostoffice`.
 
 Then verify:
 
