@@ -8,6 +8,8 @@ describe("GitHub Actions CI workflow", () => {
     expect(workflow).toContain("pull_request:");
     expect(workflow).toContain("push:");
     expect(workflow).toContain("branches: [main]");
+    expect(workflow).toContain("uses: actions/checkout@v5");
+    expect(workflow).toContain("uses: actions/setup-node@v6");
     expect(workflow).toContain("node-version: 20");
     expect(workflow).toContain("cache: npm");
     expect(workflow).toContain("run: npm ci");
