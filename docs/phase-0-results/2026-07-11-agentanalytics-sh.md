@@ -1,6 +1,6 @@
 # Phase 0 partial evidence: 2026-07-11
 
-Status: **in progress**. This file contains infrastructure-state evidence only. It does not prove real SMTP receipt or outbound delivery.
+Status: **in progress**. This file records sanitized infrastructure, inbound, and outbound-acceptance evidence. It does not prove final outbound delivery.
 
 ## Inbound routing configuration
 
@@ -16,9 +16,9 @@ Status: **in progress**. This file contains infrastructure-state evidence only. 
 
 ## Still pending
 
-- A real inbound message must be received, polled, acknowledged, and checked for byte and authentication behavior.
+- Inbound byte fidelity and independent authentication interpretation remain to be checked.
 - Unknown and disabled recipient behavior must be exercised over SMTP.
-- Email Sending onboarding and every outbound, reply, failure-injection, parser-limit, and observability gate remain pending.
+- Final outbound delivery/header authentication, failure-injection, parser-limit, and observability gates remain pending.
 
 ## First live inbound attempts
 
@@ -45,4 +45,13 @@ Status: **in progress**. This file contains infrastructure-state evidence only. 
 - Cloudflare rejected the custom `Message-ID` header; the failed idempotency key remains permanently failed and was not reused.
 - A new test first reproduced the invalid request shape.
 - The Worker now preserves `In-Reply-To` and `References` while allowing Cloudflare to generate the outbound `Message-ID`.
-- The focused test and full local suite pass; a post-fix real reply remains pending.
+- The focused test and full local suite passed before deployment.
+
+## Email Sending onboarding and accepted reply
+
+- Cloudflare Email Sending was onboarded for the apex domain and reports the sending domain enabled.
+- Cloudflare installed three bounce MX records plus managed bounce SPF and DKIM records.
+- The pre-existing DMARC policy sent aggregate reports to a former provider. With explicit operator approval, that reporting destination was removed while preserving `p=reject`.
+- Cloudflare's authoritative nameserver returned the resulting single DMARC policy without the former reporting destination.
+- A fresh post-onboarding threaded reply was accepted and returned a Cloudflare provider message identifier.
+- This proves Cloudflare accepted the outbound handoff. It does not prove destination delivery, visible thread placement, or SPF/DKIM/DMARC results at the recipient.

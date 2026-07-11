@@ -1,6 +1,6 @@
 # Mandatory Cloudflare Phase 0 proof
 
-Status: **in progress**. Local tests are green and inbound routing is configured, but real SMTP receipt, Email Sending, authentication, failure semantics, and delivery observability remain unproven.
+Status: **in progress**. Local tests are green; active-recipient inbound receipt and Cloudflare outbound acceptance are proven. Authentication at the recipient, failure semantics, recipient delivery, and delivery observability remain unproven.
 
 Run this checklist on a disposable domain or subdomain. Save sanitized evidence under `docs/phase-0-results/YYYY-MM-DD-domain.md`. Never record API tokens, Agent Post Office bearer tokens, subjects, bodies, attachments, or complete sender/recipient addresses.
 
@@ -18,7 +18,7 @@ Run this checklist on a disposable domain or subdomain. Save sanitized evidence 
 | Polling correctness | Client-crash, same-timestamp, and concurrent-arrival traversal shows no skipped IDs. | Passed locally; live pending |
 | Content safety | Raw/SVG/HTML/attachment downloads are attachments with `nosniff` and sandboxing; clients do not render/open them. | Passed locally; live pending |
 | Inbound authentication source | Cloudflare-provided SPF/DKIM/DMARC source is distinguishable from sender-supplied headers, or fields remain omitted. | Pending |
-| Reply behavior | Real reply uses the receiving mailbox, correct recipient constraints, `Message-ID`, `In-Reply-To`, and `References`. | Pending |
+| Reply behavior | Real reply uses the receiving mailbox, correct recipient constraints, `Message-ID`, `In-Reply-To`, and `References`. | Partial: Cloudflare accepted a threaded reply and generated its provider message identifier; recipient-side headers and threading remain pending. |
 | Delivery observability | Email Service logs/GraphQL correlate sends; hard bounce, soft retry, and suppression behavior are recorded without a runtime analytics secret. | Pending |
 
 ## Failure injection rules
